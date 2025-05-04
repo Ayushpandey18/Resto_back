@@ -72,7 +72,7 @@ const loginUser=async_Handler(async(req,res)=>{
     )
     const options = {
         path: "/",
-        domain: "localhost",
+        domain: "https://resto-front-theta.vercel.app",
         httpOnly: false,    // Allows JavaScript access
         secure: false,       // Set to `true` if using HTTPS  // Required for cross-origin
       };
@@ -118,8 +118,10 @@ try {
         throw new apierror("invalid refresh token",403)
     }
     const options={
-        httpOnly: true,
-        secure:true
+        httpOnly: true,  // Ensures cookies cannot be accessed via JavaScript
+        secure: process.env.NODE_ENV === "production", // Secure flag is true only in production (HTTPS)
+        path: "/",
+        domain: process.env.VERCEL_URL || "localhost", // Dynamically set domain for Vercel
     }
     const {accessToken,newrefreshToken}=await generateAccessTokenandRefreshToken(user._id)
     return res.status(200).cookie("accessToken",accessToken,options)
